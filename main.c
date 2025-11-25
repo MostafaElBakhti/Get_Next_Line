@@ -6,7 +6,7 @@
 /*   By: mel-bakh <mel-bakh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 19:20:25 by mel-bakh          #+#    #+#             */
-/*   Updated: 2025/11/22 20:49:03 by mel-bakh         ###   ########.fr       */
+/*   Updated: 2025/11/24 22:40:30 by mel-bakh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,21 @@
 
 int main(void)
 {
-    int     fd;
-    char    *line;
+    int fd;
+    char *line;
 
-    fd = open("test.txt", O_RDONLY);
+    fd = open("test.html", O_RDONLY | O_CREAT);
+
     if (fd < 0)
     {
-        printf("Error opening file\n");
-        return (1);
+        printf("failed");
     }
-
-    while ((line = get_next_line(fd)))
+    int i = 1;
+    while ((line = get_next_line(fd)) != NULL)
     {
-        printf("LINE: %s\n", line);
-        free(line);
+        printf("line %d : %s\n", i, line);
+        i++;
     }
 
-    close(fd);
-    return (0);
+    line = get_next_line(fd);
 }

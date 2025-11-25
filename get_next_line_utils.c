@@ -6,7 +6,7 @@
 /*   By: mel-bakh <mel-bakh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 19:21:00 by mel-bakh          #+#    #+#             */
-/*   Updated: 2025/11/23 21:55:58 by mel-bakh         ###   ########.fr       */
+/*   Updated: 2025/11/24 23:12:54 by mel-bakh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,21 +42,7 @@ size_t ft_strlen(const char *s1)
 	}
 	return len;
 }
-char *ft_strcat(char *dst, char *src)
-{
-	size_t d_len;
-	size_t i;
 
-	d_len = ft_strlen(dst);
-	i = 0;
-	while (src[i])
-	{
-		dst[d_len + i] = src[i];
-		i++;
-	}
-	dst[d_len + i] = '\0';
-	return (dst);
-}
 char *ft_strcpy(char *dst, const char *src)
 {
 	size_t i = 0;
@@ -74,7 +60,6 @@ char *ft_strjoin(char *s1, char *s2)
 	char *new;
 	size_t s1_len;
 	size_t s2_len;
-	size_t i;
 
 	if (!s2)
 		return (NULL);

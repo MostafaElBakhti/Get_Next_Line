@@ -6,7 +6,7 @@
 /*   By: mel-bakh <mel-bakh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:45:52 by mel-bakh          #+#    #+#             */
-/*   Updated: 2025/11/23 00:44:55 by mel-bakh         ###   ########.fr       */
+/*   Updated: 2025/11/24 23:04:21 by mel-bakh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,17 @@
 
 char *ft_read_line(int fd, char *remainder)
 {
-    char        *buffer;
-    int         readed_bytes;
+    char *buffer;
+    int readed_bytes;
 
-    buffer = malloc(BUFF_SIZE + 1);
+    buffer = malloc(BUFFER_SIZE + 1);
     if (!buffer)
         return (NULL);
-    
+
     readed_bytes = 1;
     while (!ft_strchr(remainder, '\n') && readed_bytes > 0)
     {
-        readed_bytes = read(fd, buffer, BUFF_SIZE);
+        readed_bytes = read(fd, buffer, BUFFER_SIZE);
 
         if (readed_bytes < 0)
         {
@@ -34,30 +34,33 @@ char *ft_read_line(int fd, char *remainder)
         }
 
         buffer[readed_bytes] = '\0';
-        remainder = ft_strjoin(remainder , buffer);
+        remainder = ft_strjoin(remainder, buffer);
         if (!remainder)
         {
             free(buffer);
             return (NULL);
         }
     }
-    free (buffer);
-    return(remainder);
-    
+    free(buffer);
+    return (remainder);
 }
 
 char *extract_line(char *remainder)
 {
-    char    *line;
-    int     i;
+    char *line;
+    int i;
+    size_t len;
 
-    if( !remainder || !*remainder)
+    if (!remainder || !*remainder)
         return (NULL);
     i = 0;
     while (remainder[i] && remainder[i] != '\n')
         i++;
+    len = i;
 
-    line = malloc(i + (remainder[i] == '\n') + 1);
+    if (remainder[i] == '\n')
+        len++;
+    line = malloc(len + 1);
     if (!line)
         return (NULL);
     i = 0;
@@ -68,7 +71,7 @@ char *extract_line(char *remainder)
     }
     if (remainder[i] == '\n')
     {
-        line[i] = '\0';
+        line[i] = '\n';
         i++;
     }
     line[i] = '\0';
@@ -76,14 +79,15 @@ char *extract_line(char *remainder)
 }
 char *update_remainder(char *remainder)
 {
-    char *new_remainder; 
+    char *new_remainder;
     int i;
     int j;
-
-    i = 0 ;
+    if (!remainder)
+        return (NULL);
+    i = 0;
     while (remainder[i] && remainder[i] != '\n')
         i++;
-    
+
     if (!remainder[i])
     {
         free(remainder);
@@ -96,33 +100,41 @@ char *update_remainder(char *remainder)
         free(remainder);
         return (NULL);
     }
-    j = 0 ;
+    j = 0;
     while (remainder[i])
         new_remainder[j++] = remainder[i++];
     new_remainder[j] = '\0';
 
     free(remainder);
+
+    if (new_remainder[0] == '\0')
+    {
+        free(new_remainder);
+        return (NULL);
+    }
     return (new_remainder);
 }
 char *get_next_line(int fd)
 {
     static char *remainder;
-    char        *line;
+    char *line;
 
-    if (fd < 0 || BUFF_SIZE <= 0) 
+    if (fd < 0 || BUFFER_SIZE <= 0)
         return (NULL);
     remainder = ft_read_line(fd, remainder);
     if (!remainder)
-        return (NULL);
-    
+    {
+        remainder = NULL;
+        return NULL;
+    }
+
     line = extract_line(remainder);
     if (!line)
     {
-        free(remainder);
-        remainder = NULL ;
+        free(remainder);  //! to avoid memory leaks
+        remainder = NULL; //! reaminder keep pointing to the same adress , so we do = NULL
         return (NULL);
     }
     remainder = update_remainder(remainder);
     return (line);
-    
 }
