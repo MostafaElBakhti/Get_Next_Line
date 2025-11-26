@@ -1,0 +1,9 @@
+*.o
+*.exe
+/build/
+/dist/
+.env
+.vscode/
+test.html
+.DS_Store
+main.c
