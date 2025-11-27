@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-bakh <mel-bakh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/26 01:11:06 by mel-bakh          #+#    #+#             */
-/*   Updated: 2025/11/26 23:47:41 by mel-bakh         ###   ########.fr       */
+/*   Created: 2025/11/26 21:52:14 by mel-bakh          #+#    #+#             */
+/*   Updated: 2025/11/27 00:17:13 by mel-bakh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_read_line(int fd, char *remainder)
 {
@@ -93,17 +93,22 @@ char	*update_remainder(char *remainder)
 
 char	*get_next_line(int fd)
 {
-	static char	*remainder;
+	static char	*remainder[OPEN_MAX];
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= OPEN_MAX || BUFFER_SIZE <= 0)
 		return (NULL);
-	remainder = ft_read_line(fd, remainder);
-	if (!remainder)
+	remainder[fd] = ft_read_line(fd, remainder[fd]);
+	if (!remainder[fd])
 		return (NULL);
-	line = extract_line(remainder);
+	line = extract_line(remainder[fd]);
 	if (!line)
-		return (free(remainder), remainder = NULL, NULL);
-	remainder = update_remainder(remainder);
+	{
+		if (remainder[fd])
+			free(remainder[fd]);
+		remainder[fd] = NULL;
+		return (NULL);
+	}
+	remainder[fd] = update_remainder(remainder[fd]);
 	return (line);
 }
